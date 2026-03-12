@@ -6,6 +6,38 @@
 	<title>Login</title>
 </head>
 <body>
-	
+	<h1>Login</h1>
+	<form>
+		<input type="text" id="nome" placeholder="Usuário">
+		<input type="password" id="senha" placeholder="Senha">
+		<button type="button" onclick="fazerLogin()">Entrar</button>
+	</form>
+
+	<script>
+		async function fazerLogin() {
+			const dados = {
+				nome: document.getElementById("nome").value,
+				bio: "",
+				senha: document.getElementById("senha").value,
+			};
+
+			const resposta = await fetch("/login", {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(dados)
+			});
+
+			if (resposta.ok) {
+				window.location.href = "/home"
+			} 
+			else {
+				const erro = await resposta.json();
+				alert(erro.detail);
+				return;
+			}
+		}
+	</script>
 </body>
 </html>
