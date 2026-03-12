@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, Request, HTTPException, status, Cookie, Response
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+from typing import Annotated
 
 app = FastAPI()
 
@@ -51,8 +52,22 @@ def login(user: User, response: Response):
     return {"message": "Logado com sucesso"}
 
 
+def get_active_user(session_user: Annotated[str | None, Cookie()] = None):
+    if not session_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Você não está logado"
+        )
+
+    user = next((u for u in users if u.nome == session_user), None)
+    if not user:
+        raise HTTPException(status_code=401, detail="Sessão inválida")
+
+    return user
+
+
 @app.get("/home")
-def home_render(request: Request):
+def home_render(request: Request, user: User = Depends(get_active_user)):
     return templates.TemplateResponse(
-        request=request, name="home.html"
+        request=request, name="home.html", context={"user": user}
     )
