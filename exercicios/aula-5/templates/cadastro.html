@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cadastro</title>
+</head>
+<body>
+	<h1>Cadastro</h1>
+	<form>
+		<input type="text" id="nome" placeholder="Usuário">
+		<input type="text" id="bio" placeholder="Bio">
+		<input type="password" id="senha" placeholder="Senha">
+		<button type="button" onclick="criarUsuario()">Cadastrar</button>
+	</form>
+
+	<script>
+		async function criarUsuario() {
+			const dados = {
+				nome: document.getElementById("nome").value,
+				bio: document.getElementById("bio").value,
+				senha: document.getElementById("senha").value,
+			};
+
+			const resposta = await fetch("/users", {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(dados)
+			})
+
+			if (resposta.ok) {
+				window.location.href = "/login"
+			}
+		}
+	</script>
+</body>
+</html>
