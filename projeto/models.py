@@ -5,7 +5,7 @@ from datetime import datetime
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    username: str
+    username: str = Field(index=True, unique=True)
     bio: str
 
     attempts: List["Attempt"] = Relationship(back_populates="user")

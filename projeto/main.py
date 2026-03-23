@@ -22,6 +22,10 @@ def on_startup():
 @app.post("/user")
 async def create_user(user: User):
     with Session(engine) as session:
+        user_db = session.exec(select(User).where(User.username == user.username)).first()
+        if user_db:
+            raise HTTPException(status_code=400, detail="Username already exists")
+
         session.add(user)
         session.commit()
         session.refresh(user)
@@ -40,29 +44,29 @@ async def add_attempt(attempt: Attempt):
         return attempt
 
 
-@app.get("/user/{user_id}/data")
-async def get_user(user_id: int):
+@app.get("/user/{username}/data")
+async def get_user(username: str):
     with Session(engine) as session:
-        user = session.get(User, user_id)
+        user = session.exec(select(User).where(User.username == username)).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
 
-@app.get("/user/{user_id}/attempts")
-async def get_user_attempts(user_id: int):
+@app.get("/user/{username}/attempts")
+async def get_user_attempts(username: str):
     with Session(engine) as session:
-        user = session.get(User, user_id)
+        user = session.exec(select(User).where(User.username == username)).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user.attempts
 
 
-@app.get("/user/{user_id}/wpm")
-async def get_user_wpm(user_id: int):
+@app.get("/user/{username}/wpm")
+async def get_user_wpm(username: str):
     with Session(engine) as session:
-        user = session.get(User, user_id)
+        user = session.exec(select(User).where(User.username == username)).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        query = select(func.max(Attempt.wpm)).where(Attempt.user_id == user_id)
+        query = select(func.max(Attempt.wpm)).where(Attempt.user_id == user.id)
         return session.exec(query).first()
