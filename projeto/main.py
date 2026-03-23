@@ -15,3 +15,21 @@ app = FastAPI()
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+
+
+@app.post("/user")
+async def create_user(user: User):
+    with Session(engine) as session:
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
+
+
+@app.post("/attempt")
+async def add_attempt(attempt: Attempt):
+    with Session(engine) as session:
+        session.add(attempt)
+        session.commit()
+        session.refresh(attempt)
+        return attempt
