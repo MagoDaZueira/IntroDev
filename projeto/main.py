@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from sqlmodel import Session, select, SQLModel, create_engine
 from models import User, Attempt
 
+from utils.verify_attempt import verify_attempt
+
 arquivo_sqlite = "projeto.db"
 url_sqlite = f"sqlite:///{arquivo_sqlite}"
 
@@ -28,6 +30,9 @@ async def create_user(user: User):
 
 @app.post("/attempt")
 async def add_attempt(attempt: Attempt):
+    if not verify_attempt(attempt):
+        raise HTTPException(status_code=400, detail="Invalid attempt")
+
     with Session(engine) as session:
         session.add(attempt)
         session.commit()
