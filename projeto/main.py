@@ -70,3 +70,34 @@ async def get_user_wpm(username: str):
             raise HTTPException(status_code=404, detail="User not found")
         query = select(func.max(Attempt.wpm)).where(Attempt.user_id == user.id)
         return session.exec(query).first()
+
+
+@app.patch("/user/{username}/bio")
+async def update_bio(username: str, bio: str):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.bio = bio
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
+
+
+@app.patch("/user/{username}/username")
+async def update_username(username: str, new_username: str):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        user_new_name = session.exec(select(User).where(User.username == new_username)).first()
+        if user_new_name:
+            raise HTTPException(status_code=400, detail="Username already exists")
+
+        user.username = new_username
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
