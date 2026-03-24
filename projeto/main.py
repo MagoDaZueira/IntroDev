@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from sqlmodel import Session, select, SQLModel, create_engine, func
+from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
 
 from utils.verify_attempt import verify_attempt
@@ -101,3 +101,21 @@ async def update_username(username: str, new_username: str):
         session.commit()
         session.refresh(user)
         return user
+
+
+async def delete_attempts(user_id: int):
+    with Session(engine) as session:
+        session.exec(delete(Attempt).where(Attempt.user_id == user_id))
+        session.commit()
+
+@app.delete("/user/{username}")
+async def delete_user(username: str):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        await delete_attempts(user.id)
+        session.exec(delete(User).where(User.username == username))
+        session.commit()
+
+    return {"message": "User deleted successfully"}
