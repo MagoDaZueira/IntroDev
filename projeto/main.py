@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 
 from utils.verify_attempt import verify_attempt
+from utils.password import hash_password, verify_password
 
 arquivo_sqlite = "projeto.db"
 url_sqlite = f"sqlite:///{arquivo_sqlite}"
@@ -20,6 +21,7 @@ app = FastAPI()
 class UserBase(BaseModel):
     username: str
     bio: str
+    password: str
 
 
 @app.on_event("startup")
@@ -37,6 +39,7 @@ async def create_user(user: UserBase):
         new_user = User(
             username=user.username,
             bio=user.bio,
+            password=hash_password(user.password)
         )
 
         session.add(new_user)

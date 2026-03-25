@@ -7,6 +7,7 @@ class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
     bio: str
+    password: str
 
     attempts: List["Attempt"] = Relationship(back_populates="user")
 
