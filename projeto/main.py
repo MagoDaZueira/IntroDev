@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
 from pydantic import BaseModel
@@ -16,6 +18,7 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 app = FastAPI()
+templates = Jinja2Templates(directory=["templates"])
 
 
 class UserBase(BaseModel):
@@ -27,6 +30,11 @@ class UserBase(BaseModel):
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+
+
+@app.get("/signup", response_class=HTMLResponse)
+async def get_signup(request: Request):
+    return templates.TemplateResponse(request, "signup.html")
 
 
 @app.post("/user")
