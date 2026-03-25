@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
 from pydantic import BaseModel
@@ -34,6 +35,11 @@ def on_startup():
     create_db_and_tables()
 
 
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse(request, "main.html")
+
+
 @app.get("/signup", response_class=HTMLResponse)
 async def get_signup(request: Request):
     return templates.TemplateResponse(request, "signup.html")
@@ -42,6 +48,20 @@ async def get_signup(request: Request):
 @app.get("/login", response_class=HTMLResponse)
 async def get_login(request: Request):
     return templates.TemplateResponse(request, "login.html")
+
+
+@app.post("/login")
+async def post_login(username: str = Form(...), password: str = Form(...)):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            return HTMLResponse('<p>User not found</p>')
+        if not verify_password(password, user.password):
+            return HTMLResponse('<p>Incorrect password</p>')
+
+        response = Response()
+        response.headers["HX-Redirect"] = "/"
+        return response
 
 
 @app.post("/user")
