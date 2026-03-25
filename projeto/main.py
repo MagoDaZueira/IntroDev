@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
+from pydantic import BaseModel
+
 
 from utils.verify_attempt import verify_attempt
 
@@ -14,22 +16,33 @@ def create_db_and_tables():
 
 app = FastAPI()
 
+
+class UserBase(BaseModel):
+    username: str
+    bio: str
+
+
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
 
 
 @app.post("/user")
-async def create_user(user: User):
+async def create_user(user: UserBase):
     with Session(engine) as session:
         user_db = session.exec(select(User).where(User.username == user.username)).first()
         if user_db:
             raise HTTPException(status_code=400, detail="Username already exists")
 
-        session.add(user)
+        new_user = User(
+            username=user.username,
+            bio=user.bio,
+        )
+
+        session.add(new_user)
         session.commit()
-        session.refresh(user)
-        return user
+        session.refresh(new_user)
+        return new_user
 
 
 @app.post("/attempt")
