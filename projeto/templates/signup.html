@@ -4,40 +4,23 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sign Up</title>
+
+	<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
 	<h1>Sign Up</h1>
-	<form>
-		<input type="text" id="username" placeholder="Username">
-		<input type="text" id="bio" placeholder="Bio">
-		<input type="password" id="password" placeholder="Password">
-		<button type="button" onclick="createUser()">Sign Up</button>
+
+	<form 
+		hx-post="/user"
+		hx-trigger="submit"
+		hx-target="#error"
+		hx-swap="innerHTML">
+		<input type="text" name="username" placeholder="Username">
+		<input type="text" name="bio" placeholder="Bio">
+		<input type="password" name="password" placeholder="Password">
+		<button type="submit">Sign Up</button>
 	</form>
 
-	<script>
-		async function createUser() {
-			const data = {
-				username: document.getElementById("username").value,
-				bio: document.getElementById("bio").value,
-				password: document.getElementById("password").value,
-			};
-
-			const resposta = await fetch("/user", {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
-			})
-
-			if (resposta.ok) {
-				window.location.href = "/login"
-			}
-			else {
-				const error = await resposta.json()
-				console.error(error)
-			}
-		}
-	</script>
+	<div id="error"></div>
 </body>
 </html>

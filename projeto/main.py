@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request, Form
+from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
@@ -37,23 +37,30 @@ async def get_signup(request: Request):
     return templates.TemplateResponse(request, "signup.html")
 
 
+@app.get("/login", response_class=HTMLResponse)
+async def get_login(request: Request):
+    return templates.TemplateResponse(request, "login.html")
+
+
 @app.post("/user")
-async def create_user(user: UserBase):
+async def create_user(username: str = Form(...), bio: str = Form(""), password: str = Form(...)):
     with Session(engine) as session:
-        user_db = session.exec(select(User).where(User.username == user.username)).first()
+        user_db = session.exec(select(User).where(User.username == username)).first()
         if user_db:
-            raise HTTPException(status_code=400, detail="Username already exists")
+            return HTMLResponse('<p>Username already exists</p>')
 
         new_user = User(
-            username=user.username,
-            bio=user.bio,
-            password=hash_password(user.password)
+            username=username,
+            bio=bio,
+            password=hash_password(password)
         )
 
         session.add(new_user)
         session.commit()
-        session.refresh(new_user)
-        return new_user
+
+        response = Response()
+        response.headers["HX-Redirect"] = "/login"
+        return response
 
 
 @app.post("/attempt")
