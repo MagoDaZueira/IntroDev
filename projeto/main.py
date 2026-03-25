@@ -1,10 +1,11 @@
-from fastapi import FastAPI, HTTPException, Request, Form
-from fastapi.responses import HTMLResponse, Response
+from fastapi import FastAPI, HTTPException, Request, Form, Depends, Cookie
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select, delete, SQLModel, create_engine, func
 from models import User, Attempt
 from pydantic import BaseModel
+from typing import Annotated
 
 
 from utils.verify_attempt import verify_attempt
@@ -35,9 +36,34 @@ def on_startup():
     create_db_and_tables()
 
 
+def get_active_user(session_user: Annotated[str | None, Cookie()] = None):
+    if not session_user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == session_user)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user
+
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request: Request, exc: HTTPException):
+    if exc.status_code == 401:
+        if request.headers.get("HX-Request"):
+            return HTMLResponse(
+                status_code=200, 
+                headers={"HX-Redirect": "/login"}
+            )
+
+        return RedirectResponse(url="/login", status_code=303)
+
+    return HTMLResponse(content=exc.detail, status_code=exc.status_code)
+
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    return templates.TemplateResponse(request, "main.html")
+async def root(request: Request, user: User = Depends(get_active_user)):
+    return templates.TemplateResponse(request, "main.html", context={"user": user})
 
 
 @app.get("/signup", response_class=HTMLResponse)
@@ -61,6 +87,7 @@ async def post_login(username: str = Form(...), password: str = Form(...)):
 
         response = Response()
         response.headers["HX-Redirect"] = "/"
+        response.set_cookie(key="session_user", value=user.username)
         return response
 
 
