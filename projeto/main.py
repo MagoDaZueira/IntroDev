@@ -152,6 +152,21 @@ async def get_user_wpm(username: str):
         return session.exec(query).first()
 
 
+@app.get("/user/{username}/playtime")
+async def get_total_time(username: str):
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        total = session.exec(
+            select(func.sum(Attempt.duration))
+            .where(Attempt.user_id == user.id)
+        ).first()
+
+        return total or 0
+
+
 @app.patch("/user/{username}/bio")
 async def update_bio(username: str, bio: str):
     with Session(engine) as session:
