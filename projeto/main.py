@@ -136,7 +136,7 @@ async def private_user_page(request: Request, user: User = Depends(get_active_us
         "attempts": attempts
     }
 
-    return templates.TemplateResponse(request, "/layouts/myuser.html", context={"user": user_info})
+    return templates.TemplateResponse(request, "/layouts/profile.html", context={"user": user_info})
 
 
 @app.get("/user/{username}")
