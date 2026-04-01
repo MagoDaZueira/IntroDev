@@ -122,6 +122,26 @@ async def add_attempt(attempt: Attempt):
         return attempt
 
 
+@app.get("/user/{username}")
+async def user_page(request: Request, username: str, user: User = Depends(get_active_user)):
+
+    if not user.username == username:
+        return HTTPException(status_code=404, detail="Not your user")
+
+    wpm = get_user_wpm(user.username)
+    playtime = get_total_time(user.username)
+    
+    user_info = {
+        "username": user.username,
+        "bio": user.bio,
+        "attempts": user.attempts,
+        "wpm": wpm,
+        "playtime": playtime
+    }
+
+    return templates.TemplateResponse(request, "user.html", context={"user": user_info})
+
+
 def get_user_by_name(session: Session, username: str) -> User:
     user = session.exec(select(User).where(User.username == username)).first()
     if not user:
