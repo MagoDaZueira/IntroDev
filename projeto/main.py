@@ -60,17 +60,17 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request, user: User = Depends(get_active_user)):
-    return templates.TemplateResponse(request, "main.html", context={"user": user})
+    return templates.TemplateResponse(request, "/layouts/main.html", context={"user": user})
 
 
 @app.get("/signup", response_class=HTMLResponse)
 async def get_signup(request: Request):
-    return templates.TemplateResponse(request, "signup.html")
+    return templates.TemplateResponse(request, "/layouts/signup.html")
 
 
 @app.get("/login", response_class=HTMLResponse)
 async def get_login(request: Request):
-    return templates.TemplateResponse(request, "login.html")
+    return templates.TemplateResponse(request, "/layouts/login.html")
 
 
 @app.post("/login")
@@ -122,24 +122,37 @@ async def add_attempt(attempt: Attempt):
         return attempt
 
 
-@app.get("/user/{username}")
-async def user_page(request: Request, username: str, user: User = Depends(get_active_user)):
-
-    if not user.username == username:
-        return HTTPException(status_code=404, detail="Not your user")
-
-    wpm = get_user_wpm(user.username)
-    playtime = get_total_time(user.username)
+@app.get("/profile")
+async def private_user_page(request: Request, user: User = Depends(get_active_user)):
+    wpm = await get_user_wpm(user.username)
+    playtime = await get_total_time(user.username)
+    attempts = await get_user_attempts(user.username)
     
     user_info = {
         "username": user.username,
         "bio": user.bio,
-        "attempts": user.attempts,
+        "wpm": wpm,
+        "playtime": playtime,
+        "attempts": attempts
+    }
+
+    return templates.TemplateResponse(request, "/layouts/myuser.html", context={"user": user_info})
+
+
+@app.get("/user/{username}")
+async def public_user_page(request: Request, username: str):
+    user = await get_user_by_name(username)
+    wpm = await get_user_wpm(user.username)
+    playtime = await get_total_time(user.username)
+    
+    user_info = {
+        "username": user.username,
+        "bio": user.bio,
         "wpm": wpm,
         "playtime": playtime
     }
 
-    return templates.TemplateResponse(request, "user.html", context={"user": user_info})
+    return templates.TemplateResponse(request, "/layouts/user.html", context={"user": user_info})
 
 
 def get_user_by_name(session: Session, username: str) -> User:
