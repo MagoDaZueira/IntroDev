@@ -1,1 +1,21 @@
-<div>Hello Bixo</div>
+<div class="user-header container">
+	<div class="username-box">
+		<h2 class="username">{{ user.username }}</h2>
+	</div>
+	<div class="bio-box">
+		<strong class="bio-name">Bio</strong>
+		<p class="bio">{{ user.bio }}</p>
+	</div>
+	<div class="stats-box">
+		<div class="stat-div">
+			<strong class="stat-name">Playtime</strong>
+			<br>
+			<span class="stat">{{ user.playtime }}</span>
+		</div>
+		<div class="stat-div">
+			<strong class="stat-name">Attempts Completed</strong>
+			<br>
+			<span class="stat">{{ user.attempt_count }}</span>
+		</div>
+	</div>
+</div>
