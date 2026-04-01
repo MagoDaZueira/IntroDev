@@ -41,10 +41,7 @@ def get_active_user(session_user: Annotated[str | None, Cookie()] = None):
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == session_user)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
+        user = get_user_by_name(session, session_user)
         return user
 
 
@@ -79,8 +76,9 @@ async def get_login(request: Request):
 @app.post("/login")
 async def post_login(username: str = Form(...), password: str = Form(...)):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
+        try:
+            user = get_user_by_name(session, username)
+        except HTTPException:
             return HTMLResponse('<p>User not found</p>')
         if not verify_password(password, user.password):
             return HTMLResponse('<p>Incorrect password</p>')
@@ -124,30 +122,24 @@ async def add_attempt(attempt: Attempt):
         return attempt
 
 
-@app.get("/user/{username}/data")
-async def get_user(username: str):
-    with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        return user
+def get_user_by_name(session: Session, username: str) -> User:
+    user = session.exec(select(User).where(User.username == username)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 
 @app.get("/user/{username}/attempts")
 async def get_user_attempts(username: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
         return user.attempts
 
 
 @app.get("/user/{username}/wpm")
 async def get_user_wpm(username: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
         query = select(func.max(Attempt.wpm)).where(Attempt.user_id == user.id)
         return session.exec(query).first()
 
@@ -155,9 +147,7 @@ async def get_user_wpm(username: str):
 @app.get("/user/{username}/playtime")
 async def get_total_time(username: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
 
         total = session.exec(
             select(func.sum(Attempt.duration))
@@ -170,9 +160,7 @@ async def get_total_time(username: str):
 @app.patch("/user/{username}/bio")
 async def update_bio(username: str, bio: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
         user.bio = bio
         session.add(user)
         session.commit()
@@ -183,9 +171,7 @@ async def update_bio(username: str, bio: str):
 @app.patch("/user/{username}/username")
 async def update_username(username: str, new_username: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
 
         user_new_name = session.exec(select(User).where(User.username == new_username)).first()
         if user_new_name:
@@ -206,9 +192,7 @@ async def delete_attempts(user_id: int):
 @app.delete("/user/{username}")
 async def delete_user(username: str):
     with Session(engine) as session:
-        user = session.exec(select(User).where(User.username == username)).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = get_user_by_name(session, username)
         await delete_attempts(user.id)
         session.exec(delete(User).where(User.username == username))
         session.commit()
