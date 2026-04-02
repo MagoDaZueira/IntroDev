@@ -123,8 +123,9 @@ async def add_attempt(attempt: Attempt, session: Session = Depends(get_session))
     return attempt
 
 
-@app.get("/profile")
-async def private_user_page(request: Request, user: User = Depends(get_active_user), session: Session = Depends(get_session)):
+@app.get("/user/{username}")
+async def public_user_page(request: Request, username: str, session: Session = Depends(get_session)):
+    user = get_user_by_name(session, username)
     avg_wpm = get_user_avg_wpm(session, user.username)
     max_wpm = get_user_avg_wpm(session, user.username)
     avg_accuracy = get_user_avg_accuracy(session, user.username)
@@ -146,30 +147,6 @@ async def private_user_page(request: Request, user: User = Depends(get_active_us
     }
 
     return templates.TemplateResponse(request, "/layouts/profile.html", context={"user": user_info})
-
-
-@app.get("/user/{username}")
-async def public_user_page(request: Request, username: str, session: Session = Depends(get_session)):
-    user = get_user_by_name(session, username)
-    avg_wpm = get_user_avg_wpm(session, user.username)
-    max_wpm = get_user_avg_wpm(session, user.username)
-    avg_accuracy = get_user_avg_accuracy(session, user.username)
-    max_accuracy = get_user_avg_accuracy(session, user.username)
-    playtime = get_total_time(session, user.username)
-    attempt_count = get_attempt_count(session, user.id)
-    
-    user_info = {
-        "username": user.username,
-        "bio": user.bio,
-        "avg_wpm": avg_wpm,
-        "max_wpm": max_wpm,
-        "avg_accuracy": avg_accuracy,
-        "max_accuracy": max_accuracy,
-        "playtime": playtime,
-        "attempt_count": attempt_count
-    }
-
-    return templates.TemplateResponse(request, "/layouts/user.html", context={"user": user_info})
 
 
 def get_user_by_name(session: Session, username: str) -> User:
