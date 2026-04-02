@@ -1,0 +1,9 @@
+<form hx-patch="/user/{{ user.username }}/edit"
+        hx-trigger="submit"
+        hx-target="#edit-profile"
+        hx-swap="innerHTML">
+    <input type="text" name="new_username" placeholder="{{ user.username }}" value="{{ user.username }}">
+    <input type="text" name="new_bio" placeholder="{{ user.bio }}" value="{{ user.bio }}">
+    <button type="submit">Cancel</button>
+    <button type="submit">Save</button>
+</form>

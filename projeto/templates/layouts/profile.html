@@ -4,8 +4,18 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ user.username }} | Profile</title>
+	<script src="/static/js/htmx.min.js"></script>
 </head>
 <body>
 	{% include "partials/default_user_info.html" %}
+	{% if user.username == active_username %}
+		<button hx-get="/user/{{ user.username }}/edit"
+				hx-target="#edit-profile"
+				hx-swap="innerHTML"
+				hx-trigger="click">
+			Edit Profile
+		</button>
+	{% endif %}
+	<div id="edit-profile"></div>
 </body>
 </html>

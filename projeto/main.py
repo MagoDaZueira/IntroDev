@@ -41,6 +41,16 @@ def get_session():
         yield session
 
 
+def get_optional_user(session_user: Annotated[str | None, Cookie()] = None, session: Session = Depends(get_session)):
+    if not session_user:
+        return None
+    try:
+        user = get_user_by_name(session, session_user)
+    except HTTPException:
+        user = None
+    return user
+
+
 def get_active_user(session_user: Annotated[str | None, Cookie()] = None, session: Session = Depends(get_session)):
     if not session_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -123,8 +133,7 @@ async def add_attempt(attempt: Attempt, session: Session = Depends(get_session))
     return attempt
 
 
-@app.get("/user/{username}")
-async def public_user_page(request: Request, username: str, session: Session = Depends(get_session)):
+def user_dict(username: str, session: Session):
     user = get_user_by_name(session, username)
     avg_wpm = get_user_avg_wpm(session, user.username)
     max_wpm = get_user_avg_wpm(session, user.username)
@@ -146,7 +155,34 @@ async def public_user_page(request: Request, username: str, session: Session = D
         "attempt_count": attempt_count
     }
 
-    return templates.TemplateResponse(request, "/layouts/profile.html", context={"user": user_info})
+    return user_info
+
+
+@app.get("/user/{username}")
+async def public_user_page(request: Request, username: str, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
+    user_info = user_dict(username, session)
+    active_username = active_user.username if active_user else None
+    return templates.TemplateResponse(request, "/layouts/profile.html", context={"user": user_info, "active_username": active_username})
+
+
+@app.get("/user/{username}/edit")
+def edit_profile_page(request: Request, username: str, session: Session = Depends(get_session)):
+    if not request.headers.get("HX-Request"):
+        return RedirectResponse(url="/profile")
+    user = get_user_by_name(session, username)
+    user_info = {
+        "username": user.username,
+        "bio": user.bio
+    }
+    return templates.TemplateResponse(request, "/partials/edit_profile.html", context={"user": user_info})
+
+
+@app.patch("/user/{username}/edit")
+def edit_profile(username: str, new_username: str = Form(...), new_bio: str = Form(...), session: Session = Depends(get_session)):
+    user = get_user_by_name(session, username)
+    update_username(session, user, new_username)
+    update_bio(session, user, new_bio)
+    return {"message": "Profile updated successfully"}
 
 
 def get_user_by_name(session: Session, username: str) -> User:
@@ -201,29 +237,18 @@ def get_total_time(session: Session, username: str):
     return total or 0
 
 
-@app.patch("/user/{username}/bio")
-async def update_bio(username: str, bio: str, session: Session = Depends(get_session)):
-    user = get_user_by_name(session, username)
+async def update_bio(user: User, bio: str, session: Session):
     user.bio = bio
     session.add(user)
-    session.commit()
-    session.refresh(user)
-    return user
 
 
-@app.patch("/user/{username}/username")
-async def update_username(username: str, new_username: str, session: Session = Depends(get_session)):
-    user = get_user_by_name(session, username)
-
-    user_new_name = session.exec(select(User).where(User.username == new_username)).first()
+async def update_username(user: User, username: str, session: Session):
+    user_new_name = session.exec(select(User).where(User.username == username)).first()
     if user_new_name:
         raise HTTPException(status_code=400, detail="Username already exists")
 
-    user.username = new_username
+    user.username = username
     session.add(user)
-    session.commit()
-    session.refresh(user)
-    return user
 
 
 def delete_attempts(session: Session, user_id: int):
