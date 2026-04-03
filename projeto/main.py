@@ -63,6 +63,17 @@ def get_active_user(session_user: Annotated[str | None, Cookie()] = None, sessio
     return user
 
 
+def render(request: Request, template: str, context: dict):
+    if request.headers.get("HX-Request"):
+        return templates.TemplateResponse(request, template, context)
+
+    return templates.TemplateResponse(
+        request,
+        "layouts/main.html",
+        {**context, "chosen_template": template}
+    )
+
+
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == 401:
@@ -79,22 +90,22 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
     if not active_user:
-        return templates.TemplateResponse(request, "/layouts/main.html", context={"active_username": None})
+        return render(request, "/layouts/typing_test.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
-    return templates.TemplateResponse(
-        request, "/layouts/main.html",
+    return render(
+        request, "/layouts/typing_test.html",
         context={"active_username": active_user.username, "user": user_info}
     )
 
 
 @app.get("/signup", response_class=HTMLResponse)
 async def get_signup(request: Request):
-    return templates.TemplateResponse(request, "/layouts/signup.html")
+    return render(request, "/layouts/signup.html", {})
 
 
 @app.get("/login", response_class=HTMLResponse)
 async def get_login(request: Request):
-    return templates.TemplateResponse(request, "/layouts/login.html")
+    return render(request, "/layouts/login.html", {})
 
 
 @app.post("/login")
@@ -143,19 +154,19 @@ async def add_attempt(attempt: Attempt, session: Session = Depends(get_session))
 async def public_user_page(request: Request, username: str, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
     user_info = user_dict(username, session)
     active_username = active_user.username if active_user else None
-    return templates.TemplateResponse(request, "/layouts/profile.html", context={"user": user_info, "active_username": active_username})
+    return render(request, "/layouts/profile.html", context={"user": user_info, "active_username": active_username})
 
 
 @app.get("/user/{username}/edit")
 def edit_profile_page(request: Request, username: str, session: Session = Depends(get_session)):
     if not request.headers.get("HX-Request"):
-        return RedirectResponse(url="/profile")
+        return RedirectResponse(url=f"/user/{username}")
     user = get_user_by_name(session, username)
     user_info = {
         "username": user.username,
         "bio": user.bio
     }
-    return templates.TemplateResponse(request, "/partials/edit_profile.html", context={"user": user_info})
+    return render(request, "/partials/edit_profile.html", context={"user": user_info})
 
 
 @app.patch("/user/{username}/edit")
@@ -165,7 +176,7 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
     update_bio(session, user, new_bio)
     session.commit()
     user_info = user_dict(new_username, session)
-    response = templates.TemplateResponse(
+    response = render(
         request,
         "/partials/default_user_info.html",
         context={"user": user_info, "active_username": new_username, "oob": True}

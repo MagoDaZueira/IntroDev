@@ -52,4 +52,4 @@
 	</div>
 </div>
 
-<a id="navbar-user" hx-swap-oob="true" hx-get="/user/{{ active_username }}">{{ active_username }}</a>
+{% if oob %}<a id="navbar-user" hx-swap-oob="true" hx-get="/user/{{ active_username }}">{{ active_username }}</a>{% endif %}

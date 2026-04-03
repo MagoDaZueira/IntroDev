@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login</title>
-	<script src="/static/js/htmx.min.js"></script>
-</head>
-<body>
+<div>
 	<h1>Login</h1>
 	<form hx-post="/login"
 		  hx-trigger="submit"
@@ -20,5 +12,4 @@
 	<div id="signup-suggest">Don't have an account yet? <a href="{{ url_for('get_signup') }}">Sign up</a></div>
 
 	<div id="error"></div>
-</body>
-</html>
+</div>
