@@ -74,6 +74,13 @@ def render(request: Request, template: str, context: dict):
     )
 
 
+@app.get("/clear")
+async def clear_page(request: Request):
+    if not request.headers.get("HX-Request"):
+        return RedirectResponse(url="/")
+    return HTMLResponse("")
+
+
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == 401:
