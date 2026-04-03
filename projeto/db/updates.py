@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
-from models import User
+from db.models import User
 
 
 async def update_bio(user: User, bio: str, session: Session):

@@ -1,5 +1,5 @@
 from sqlmodel import Session
-from models import User, Attempt
+from db.models import User, Attempt
 
 
 def create_new_user(session: Session, username: str, bio: str, password: str):

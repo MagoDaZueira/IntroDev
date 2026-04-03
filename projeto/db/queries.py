@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, func, select
-from models import User, Attempt
+from db.models import User, Attempt
 
 
 def get_user_by_name(session: Session, username: str) -> User:

@@ -1,6 +1,6 @@
 from sqlmodel import Session, delete
-from models import User, Attempt
-from queries import get_user_by_name
+from db.models import User, Attempt
+from db.queries import get_user_by_name
 
 
 def delete_attempts(session: Session, user_id: int):
