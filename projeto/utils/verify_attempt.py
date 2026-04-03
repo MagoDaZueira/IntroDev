@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from models import Attempt
+from projeto.db.models import Attempt
 
 def verify_attempt(attempt: Attempt):
     if attempt.wpm > 350:

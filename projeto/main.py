@@ -2,11 +2,15 @@ from fastapi import FastAPI, HTTPException, Request, Form, Depends, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import Session, select, delete, SQLModel, create_engine, func
-from models import User, Attempt
+from sqlmodel import Session, SQLModel, create_engine
 from pydantic import BaseModel
 from typing import Annotated
 
+from db.models import User, Attempt
+from db.insertions import *
+from db.queries import *
+from db.updates import *
+from db.removals import *
 
 from utils.verify_attempt import verify_attempt
 from utils.password import hash_password, verify_password
@@ -104,17 +108,13 @@ async def post_login(username: str = Form(...), password: str = Form(...), sessi
 
 @app.post("/user")
 async def create_user(username: str = Form(...), bio: str = Form(""), password: str = Form(...), session: Session = Depends(get_session)):
-    user_db = session.exec(select(User).where(User.username == username)).first()
-    if user_db:
+    try:
+        get_user_by_name(session, username)
         return HTMLResponse('<p>Username already exists</p>')
+    except HTTPException:
+        pass
 
-    new_user = User(
-        username=username,
-        bio=bio,
-        password=hash_password(password)
-    )
-
-    session.add(new_user)
+    create_new_user(session, username, bio, hash_password(password))
     session.commit()
 
     response = Response()
@@ -127,35 +127,10 @@ async def add_attempt(attempt: Attempt, session: Session = Depends(get_session))
     if not verify_attempt(attempt):
         raise HTTPException(status_code=400, detail="Invalid attempt")
 
-    session.add(attempt)
+    create_attempt(session, attempt)
     session.commit()
     session.refresh(attempt)
     return attempt
-
-
-def user_dict(username: str, session: Session):
-    user = get_user_by_name(session, username)
-    avg_wpm = get_user_avg_wpm(session, user.username)
-    max_wpm = get_user_avg_wpm(session, user.username)
-    avg_accuracy = get_user_avg_accuracy(session, user.username)
-    max_accuracy = get_user_avg_accuracy(session, user.username)
-    playtime = get_total_time(session, user.username)
-    attempts = get_user_attempts(session, user.username)
-    attempt_count = get_attempt_count(session, user.id)
-
-    user_info = {
-        "username": user.username,
-        "bio": user.bio,
-        "avg_wpm": avg_wpm,
-        "max_wpm": max_wpm,
-        "avg_accuracy": avg_accuracy,
-        "max_accuracy": max_accuracy,
-        "playtime": playtime,
-        "attempts": attempts,
-        "attempt_count": attempt_count
-    }
-
-    return user_info
 
 
 @app.get("/user/{username}")
@@ -185,81 +160,9 @@ def edit_profile(username: str, new_username: str = Form(...), new_bio: str = Fo
     return {"message": "Profile updated successfully"}
 
 
-def get_user_by_name(session: Session, username: str) -> User:
-    user = session.exec(select(User).where(User.username == username)).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-def get_attempt_count(session: Session, user_id: int):
-    statement = select(func.count()).where(Attempt.user_id == user_id)
-    return session.exec(statement).one()
-
-
-def get_user_attempts(session: Session, username: str):
-    user = get_user_by_name(session, username)
-    return user.attempts
-
-
-def get_user_avg_wpm(session: Session, username: str):
-    user = get_user_by_name(session, username)
-    query = select(func.round(func.avg(Attempt.wpm), 2)).where(Attempt.user_id == user.id)
-    return session.exec(query).first() or 0
-
-
-def get_user_max_wpm(session: Session, username: str):
-    user = get_user_by_name(session, username)
-    query = select(func.max(Attempt.wpm)).where(Attempt.user_id == user.id)
-    return session.exec(query).first() or 0
-
-
-def get_user_avg_accuracy(session: Session, username: str):
-    user = get_user_by_name(session, username)
-    query = select(func.round(func.avg(Attempt.accuracy), 2)).where(Attempt.user_id == user.id)
-    return session.exec(query).first() or 0
-
-
-def get_user_max_accuracy(session: Session, username: str):
-    user = get_user_by_name(session, username)
-    query = select(func.max(Attempt.accuracy)).where(Attempt.user_id == user.id)
-    return session.exec(query).first() or 0
-
-
-def get_total_time(session: Session, username: str):
-    user = get_user_by_name(session, username)
-
-    total = session.exec(
-        select(func.sum(Attempt.duration))
-        .where(Attempt.user_id == user.id)
-    ).first()
-
-    return total or 0
-
-
-async def update_bio(user: User, bio: str, session: Session):
-    user.bio = bio
-    session.add(user)
-
-
-async def update_username(user: User, username: str, session: Session):
-    user_new_name = session.exec(select(User).where(User.username == username)).first()
-    if user_new_name:
-        raise HTTPException(status_code=400, detail="Username already exists")
-
-    user.username = username
-    session.add(user)
-
-
-def delete_attempts(session: Session, user_id: int):
-    session.exec(delete(Attempt).where(Attempt.user_id == user_id))
-    session.commit()
-
 @app.delete("/user/{username}")
 async def delete_user(username: str, session: Session = Depends(get_session)):
-    user = get_user_by_name(session, username)
-    delete_attempts(session, user.id)
-    session.exec(delete(User).where(User.username == username))
+    delete_user_by_name(session, username)
     session.commit()
 
     return {"message": "User deleted successfully"}
