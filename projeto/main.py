@@ -157,7 +157,10 @@ def edit_profile(username: str, new_username: str = Form(...), new_bio: str = Fo
     user = get_user_by_name(session, username)
     update_username(session, user, new_username)
     update_bio(session, user, new_bio)
-    return {"message": "Profile updated successfully"}
+    session.commit()
+    response = Response()
+    response.set_cookie(key="session_user", value=user.username)
+    return response
 
 
 @app.delete("/user/{username}")

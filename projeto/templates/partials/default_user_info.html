@@ -1,4 +1,12 @@
 <div class="user-header container">
+	{% if user.username == active_username %}
+		<button hx-get="/user/{{ user.username }}/edit"
+				hx-target="#edit-profile"
+				hx-swap="innerHTML"
+				hx-trigger="click">
+			Edit Profile
+		</button>
+	{% endif %}
 	<div class="username-box">
 		<h2 class="username">{{ user.username }}</h2>
 	</div>

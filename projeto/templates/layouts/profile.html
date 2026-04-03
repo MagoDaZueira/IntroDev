@@ -8,14 +8,6 @@
 </head>
 <body>
 	{% include "partials/default_user_info.html" %}
-	{% if user.username == active_username %}
-		<button hx-get="/user/{{ user.username }}/edit"
-				hx-target="#edit-profile"
-				hx-swap="innerHTML"
-				hx-trigger="click">
-			Edit Profile
-		</button>
-	{% endif %}
 	<div id="edit-profile"></div>
 </body>
 </html>
