@@ -4,15 +4,18 @@
 				hx-target="#edit-profile"
 				hx-swap="innerHTML"
 				hx-trigger="click">
-			Edit Profile
+			Edit
 		</button>
 	{% endif %}
-	<div class="username-box">
+	<div class="username-box stats-box">
 		<h2 class="username">{{ user.username }}</h2>
 	</div>
-	<div class="bio-box">
+	<div class="bio-box stats-box">
 		<strong class="bio-name">Bio</strong>
+		<details class="bio-details">
+		<summary>See bio</summary>
 		<p class="bio">{{ user.bio }}</p>
+	</details>
 	</div>
 	<div class="stats-box">
 		<div class="stat-div">
@@ -21,19 +24,19 @@
 			<span class="stat">{{ user.playtime }}</span>
 		</div>
 		<div class="stat-div">
-			<strong class="stat-name">Attempts Completed</strong>
+			<strong class="stat-name">Attempts</strong>
 			<br>
 			<span class="stat">{{ user.attempt_count }}</span>
 		</div>
 	</div>
 	<div class="stats-box">
 		<div class="stat-div">
-			<strong class="stat-name">Average WPM</strong>
+			<strong class="stat-name">Avg WPM</strong>
 			<br>
 			<span class="stat">{{ user.avg_wpm }}</span>
 		</div>
 		<div class="stat-div">
-			<strong class="stat-name">Average Accuracy</strong>
+			<strong class="stat-name">Avg Accuracy</strong>
 			<br>
 			<span class="stat">{{ user.avg_accuracy }}</span>
 		</div>

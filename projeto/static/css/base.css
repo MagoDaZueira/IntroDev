@@ -1,8 +1,11 @@
 :root {
 	--bg: #0f172a;
+	--bg-deep: #020617; 
+	--bg-surface: #1e293b;
 	--fg: #e5e7eb;
 	--accent: #22c55e;
 	--muted: #94a3b8;
+	--border: rgba(255, 255, 255, 0.05);
 }
 
 body {
@@ -10,6 +13,20 @@ body {
 	font-family: 'Roboto Mono', monospace, sans-serif;
 	background: var(--bg);
 	color: var(--fg);
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5vh;
+}
+
+button, input {
+	font-family: "Roboto Mono", monospace;
+	/* font-family: inherit; */
+	font-size: inherit;
+	line-height: inherit;
 }
 
 a[hx-get]:not([href]), 

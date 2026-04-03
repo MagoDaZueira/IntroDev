@@ -1,0 +1,40 @@
+#user-header {
+	display: flex;
+	gap: 40px;
+	flex-wrap: wrap;
+	justify-content: center;
+	padding: 20px 20px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	align-items: center;
+	background-color: var(--bg-deep);
+	max-width: 80vw;
+}
+
+.stats-box {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.stat-name, .bio-name {
+	color: var(--muted);
+}
+
+.bio-details summary {
+	cursor: pointer;
+	color: var(--accent);
+	font-size: 0.8rem;
+	outline: none;
+}
+
+.bio-details[open] summary {
+	margin-bottom: 10px;
+	content: "Collapse";
+}
+
+.bio {
+	max-width: 300px;
+	word-wrap: break-word;
+	margin: 0;
+}
