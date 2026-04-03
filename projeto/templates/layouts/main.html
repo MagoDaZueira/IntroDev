@@ -29,10 +29,7 @@
 
 			<div>
 				{% if active_username %}
-					<a id="navbar-user" class="nav-link nav-link-user"
-					hx-get="/user/{{ active_username }}">
-						{{ active_username }}
-					</a>
+					{% include "atomic/nav_user.html" %}
 				{% else %}
 					<a id="navbar-user" class="nav-link" hx-get="/login">Login</a>
 				{% endif %}

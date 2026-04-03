@@ -1,0 +1,6 @@
+<a id="navbar-user"
+   class="nav-link nav-link-user"
+   hx-get="/user/{{ active_username }}"
+   {% if oob %}hx-swap-oob="true"{% endif %}>
+	{{ active_username }}
+</a>

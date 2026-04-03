@@ -52,4 +52,4 @@
 	</div>
 </div>
 
-{% if oob %}<a id="navbar-user" hx-swap-oob="true" hx-get="/user/{{ active_username }}">{{ active_username }}</a>{% endif %}
+{% if oob %}{% include "atomic/nav_user.html" %}{% endif %}
