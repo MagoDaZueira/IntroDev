@@ -1,0 +1,24 @@
+.main-header {
+	border-bottom: 1px solid #1f2937;
+	padding: 0.75rem 1.5rem;
+	justify-content: center;
+}
+
+.main-nav {
+	display: flex;
+	gap: 1.5rem;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.main-nav > div {
+	display: flex;
+	gap: 1.5rem;
+	align-items: center;
+}
+
+main {
+	max-width: 900px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}

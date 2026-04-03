@@ -4,25 +4,47 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="/static/js/htmx.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+	<link href="/static/css/base.css" rel="stylesheet">
+	<link href="/static/css/layout.css" rel="stylesheet">
+	<link href="/static/css/components.css" rel="stylesheet">
+	<link href="/static/css/pages/typing.css" rel="stylesheet">
+	<link href="/static/css/pages/profile.css" rel="stylesheet">
+	<link href="/static/css/pages/settings.css" rel="stylesheet">
 	<title>The Typist</title>
 </head>
 <body>
-	<nav hx-target="#main-content"
-		 hx-push-url="true"
-		 hx-swap="innerHTML">
-		<a hx-get="/">Typing Test</a>
-		{% if active_username %}
-			<a id="navbar-user" hx-get="/user/{{ active_username }}">{{ active_username }}</a>
-		{% else %}
-			<a id="navbar-user" hx-get="/login">Login</a>
-		{% endif %}
-		<a hx-get="/settings">Settings</a>
-	</nav>
+	<header class="main-header">
+		<nav class="main-nav"
+			 hx-target="#main-content"
+			 hx-push-url="true"
+			 hx-swap="innerHTML">
+			
+			<div>
+				<a class="nav-link" hx-get="/">Typing Test</a>
+				<a class="nav-link" hx-get="/settings">Settings</a>
+			</div>
+
+			<div>
+				{% if active_username %}
+					<a id="navbar-user" class="nav-link nav-link-user"
+					hx-get="/user/{{ active_username }}">
+						{{ active_username }}
+					</a>
+				{% else %}
+					<a id="navbar-user" class="nav-link" hx-get="/login">Login</a>
+				{% endif %}
+			</div>
+
+		</nav>
+	</header>
 
 	<main id="main-content">
 		{% include chosen_template %}
 	</main>
 
-	<div id="toast-container"></div>
+	<div class="toast-container"></div>
 </body>
 </html>

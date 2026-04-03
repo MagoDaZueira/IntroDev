@@ -1,0 +1,32 @@
+.nav-link {
+	color: var(--muted);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.nav-link:hover {
+	color: var(--fg);
+}
+
+.nav-link-user {
+	color: var(--accent);
+}
+
+.htmx-request {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.htmx-swapping {
+	opacity: 0;
+	transition: opacity 2s;
+}
+
+a.standard-link {
+	color: var(--accent);
+	text-decoration: underline;
+}
+
+a.standard-link:hover {
+	color: var(--fg);
+}

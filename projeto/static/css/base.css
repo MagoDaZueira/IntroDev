@@ -1,0 +1,19 @@
+:root {
+	--bg: #0f172a;
+	--fg: #e5e7eb;
+	--accent: #22c55e;
+	--muted: #94a3b8;
+}
+
+body {
+	margin: 0;
+	font-family: 'Roboto', system-ui, sans-serif;
+	background: var(--bg);
+	color: var(--fg);
+}
+
+a[hx-get]:not([href]), 
+a[hx-post]:not([href]),
+[hx-get], [hx-post] {
+	cursor: pointer;
+}
