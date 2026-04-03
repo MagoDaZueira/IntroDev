@@ -99,13 +99,21 @@ async def root(request: Request, session: Session = Depends(get_session), active
 
 
 @app.get("/signup", response_class=HTMLResponse)
-async def get_signup(request: Request):
-    return render(request, "/layouts/signup.html", {})
+async def get_signup(request: Request, active_user = Depends(get_optional_user)):
+    return render(
+        request,
+        "/layouts/signup.html",
+        context={"active_username": active_user.username if active_user else None}
+    )
 
 
 @app.get("/login", response_class=HTMLResponse)
-async def get_login(request: Request):
-    return render(request, "/layouts/login.html", {})
+async def get_login(request: Request, active_user = Depends(get_optional_user)):
+    return render(
+        request,
+        "/layouts/login.html",
+        context={"active_username": active_user.username if active_user else None}
+    )
 
 
 @app.post("/login")
