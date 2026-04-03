@@ -3,9 +3,26 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<script src="/static/js/htmx.min.js"></script>
+	<title>The Typist</title>
 </head>
 <body>
-	<h1>Main page de {{ user.username }}</h1>
+	<nav hx-target="#main-content"
+		 hx-push-url="true"
+		 hx-swap="innerHTML">
+		<a hx-get="/typing-test">Typing Test</a>
+		{% if active_username %}
+			<a id="navbar-user" hx-get="/user/{{ active_username }}">{{ active_username }}</a>
+		{% else %}
+			<a id="navbar-user" hx-get="/login">Login</a>
+		{% endif %}
+		<a hx-get="/settings">Settings</a>
+	</nav>
+
+	<main id="main-content">
+		{% include "layouts/typing_test.html" %}
+	</main>
+
+	<div id="toast-container"></div>
 </body>
 </html>

@@ -77,8 +77,14 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
     return HTMLResponse(content=exc.detail, status_code=exc.status_code)
 
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request, user: User = Depends(get_active_user)):
-    return templates.TemplateResponse(request, "/layouts/main.html", context={"user": user})
+async def root(request: Request, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
+    if not active_user:
+        return templates.TemplateResponse(request, "/layouts/main.html", context={"active_username": None})
+    user_info = user_dict(active_user.username, session)
+    return templates.TemplateResponse(
+        request, "/layouts/main.html",
+        context={"active_username": active_user.username, "user": user_info}
+    )
 
 
 @app.get("/signup", response_class=HTMLResponse)
@@ -162,7 +168,7 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
     response = templates.TemplateResponse(
         request,
         "/partials/default_user_info.html",
-        context={"user": user_info, "active_username": new_username}
+        context={"user": user_info, "active_username": new_username, "oob": True}
     )
     response.set_cookie(key="session_user", value=new_username)
     response.headers["HX-Push-Url"] = f'/user/{new_username}'
