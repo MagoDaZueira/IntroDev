@@ -1,4 +1,4 @@
-<div class="user-header container">
+<div id="user-header" class="container" hx-swap-oob="true">
 	{% if user.username == active_username %}
 		<button hx-get="/user/{{ user.username }}/edit"
 				hx-target="#edit-profile"
@@ -37,6 +37,7 @@
 			<br>
 			<span class="stat">{{ user.avg_accuracy }}</span>
 		</div>
+	</div>
 	<div class="stats-box">
 		<div class="stat-div">
 			<strong class="stat-name">Max WPM</strong>

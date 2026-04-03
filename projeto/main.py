@@ -153,13 +153,19 @@ def edit_profile_page(request: Request, username: str, session: Session = Depend
 
 
 @app.patch("/user/{username}/edit")
-def edit_profile(username: str, new_username: str = Form(...), new_bio: str = Form(...), session: Session = Depends(get_session)):
+def edit_profile(request: Request, username: str, new_username: str = Form(...), new_bio: str = Form(...), session: Session = Depends(get_session)):
     user = get_user_by_name(session, username)
     update_username(session, user, new_username)
     update_bio(session, user, new_bio)
     session.commit()
-    response = Response()
-    response.set_cookie(key="session_user", value=user.username)
+    user_info = user_dict(new_username, session)
+    response = templates.TemplateResponse(
+        request,
+        "/partials/default_user_info.html",
+        context={"user": user_info, "active_username": new_username}
+    )
+    response.set_cookie(key="session_user", value=new_username)
+    response.headers["HX-Push-Url"] = f'/user/{new_username}'
     return response
 
 
