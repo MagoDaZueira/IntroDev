@@ -3,8 +3,8 @@
 	  hx-target="#edit-profile"
 	  hx-swap="innerHTML">
 
-	<input type="text" name="new_username" placeholder="{{ user.username }}" value="{{ user.username }}">
-	<input type="text" name="new_bio" placeholder="{{ user.bio }}" value="{{ user.bio }}">
+	<input type="text" name="new_username" placeholder="New Username" value="{{ user.username }}">
+	<input type="text" name="new_bio" placeholder="New Bio" value="{{ user.bio }}">
 
 	<button hx-get="/clear"
 			hx-target="closest form"

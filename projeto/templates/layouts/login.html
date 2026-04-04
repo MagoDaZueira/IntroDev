@@ -7,17 +7,16 @@
 		<input type="text" name="username" placeholder="Username">
 		<input type="password" name="password" placeholder="Password">
 		<button type="submit">Login</button>
+		<div id="signup-suggest">Don't have an account yet?
+			<a	hx-target="#main-content"
+				hx-push-url="true"
+				hx-swap="innerHTML"
+				hx-get="{{ url_for('get_signup') }}"
+				class="standard-link">
+				Sign up
+			</a>
+		</div>
 	</form>
-
-	<div id="signup-suggest">Don't have an account yet?
-		<a	hx-target="#main-content"
-			hx-push-url="true"
-			hx-swap="innerHTML"
-			hx-get="{{ url_for('get_signup') }}"
-			class="standard-link">
-			Sign up
-		</a>
-	</div>
 
 	<div id="error"></div>
 </div>
