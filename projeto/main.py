@@ -30,11 +30,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 WORDS = []
 
-class UserBase(BaseModel):
-    username: str
-    bio: str
-    password: str
-
 
 @app.on_event("startup")
 def on_startup():
