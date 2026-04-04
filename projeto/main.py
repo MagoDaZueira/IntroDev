@@ -102,7 +102,7 @@ async def root(request: Request, session: Session = Depends(get_session), active
     words = generate_words(WORDS, 25)
     return render(
         request, "/layouts/typing_test.html",
-        context={"active_username": active_user.username, "user": user_info, "words": words}
+        context={"active_username": active_user.username, "user": user_info, "text": words}
     )
 
 

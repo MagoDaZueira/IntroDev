@@ -1,7 +1,10 @@
-import { sendAttempt } from "./serverConnect";
+import { sendAttempt } from "./serverConnect.js";
+import { renderText, updateChar, resetChar } from "./domManipulation.js";
+
+let input = null;
+let container = null;
 
 let startTime = 0;
-let input = null;
 let started = false;
 let index = 0;
 
@@ -9,15 +12,23 @@ let text;
 let typedCount = 0;
 let correctCount = 0;
 
-document.body.addEventListener('htmx:afterOnLoad', () => {
+function checkAndInit() {
 	const typingArea = document.getElementById('typing-container');
 	if (typingArea) {
+		container = typingArea;
 		init();
 	}
-});
+}
+
+document.addEventListener("htmx:afterSettle", checkAndInit);
+checkAndInit();
 
 function init() {
 	input = document.getElementById('hidden-input');
+	text = container.dataset.text;
+
+	renderText(text);
+
 	input.addEventListener("keydown", (e) => {
 		if (e.key === "Backspace") {
 			handleBackspace();
@@ -68,13 +79,4 @@ function handleBackspace() {
 	if (index <= 0) return;
 	index--;
 	resetChar(index);
-}
-
-function updateChar(i, correct) {
-	chars[i].classList.remove("correct", "incorrect");
-	chars[i].classList.add(correct ? "correct" : "incorrect");
-}
-
-function resetChar(i) {
-	chars[i].classList.remove("correct", "incorrect");
 }
