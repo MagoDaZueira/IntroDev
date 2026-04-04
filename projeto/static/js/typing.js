@@ -20,11 +20,22 @@ function checkAndInit() {
 	}
 }
 
-document.addEventListener("htmx:afterSettle", checkAndInit);
 checkAndInit();
+document.addEventListener("htmx:afterSettle", checkAndInit);
+
+document.addEventListener("click", () => {
+	input.focus();
+});
+
+document.addEventListener("keydown", (e) => {
+	if (document.activeElement !== input) {
+		input.focus();
+	}
+});
 
 function init() {
 	input = document.getElementById('hidden-input');
+	input.focus();
 	text = container.dataset.text;
 
 	renderText(text);
