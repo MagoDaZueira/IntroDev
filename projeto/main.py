@@ -14,6 +14,7 @@ from db.removals import *
 
 from utils.verify_attempt import verify_attempt
 from utils.password import hash_password, verify_password
+from utils.words_generation import generate_words
 
 arquivo_sqlite = "projeto.db"
 url_sqlite = f"sqlite:///{arquivo_sqlite}"
@@ -98,9 +99,10 @@ async def root(request: Request, session: Session = Depends(get_session), active
     if not active_user:
         return render(request, "/layouts/typing_test.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
+    words = generate_words(WORDS, 25)
     return render(
         request, "/layouts/typing_test.html",
-        context={"active_username": active_user.username, "user": user_info}
+        context={"active_username": active_user.username, "user": user_info, "words": words}
     )
 
 
