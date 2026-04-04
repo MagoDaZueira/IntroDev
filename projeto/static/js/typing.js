@@ -40,14 +40,8 @@ function init() {
 
 	renderText(text);
 
-	input.addEventListener("keydown", (e) => {
-		if (e.key === "Backspace") {
-			handleBackspace();
-		}
-		else if (e.key.length === 1) {
-			handleChar(e.key);
-		}
-	});
+	input.removeEventListener("keydown", handleInputKeyDown);
+	input.addEventListener("keydown", handleInputKeyDown);
 }
 
 function startGame() {
@@ -63,6 +57,14 @@ function endGame() {
 	const accuracy = (correctCount / typedCount) * 100;
 
 	sendAttempt(wpm, accuracy, time);
+}
+
+function handleInputKeyDown(e) {
+	if (e.key === "Backspace") {
+		handleBackspace();
+	} else if (e.key.length === 1) {
+		handleChar(e.key);
+	}
 }
 
 function handleChar(key) {
