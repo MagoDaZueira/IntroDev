@@ -1,0 +1,6 @@
+.char.correct {
+	color: var(--muted);
+}
+.char.incorrect {
+	color: var(--error);
+}

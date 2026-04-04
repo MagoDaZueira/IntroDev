@@ -1,18 +1,21 @@
 <div class="screen">
-	<h1>The Typist</h1>
-	{% if not active_username %}
-		<div id="suggest-link">
-			Please
-			<a	hx-target="#main-content"
-				hx-push-url="true"
-				hx-swap="innerHTML"
-				hx-get="{{ url_for('get_login') }}"
-				class="standard-link">
-				Log in
-			</a>
-			first.
-		</div>
-	{% else %}
-		<p>Hello, {{ active_username }}!</p>
-	{% endif %}
+<h1>The Typist</h1>
+{% if not active_username %}
+	<div id="suggest-link">
+		Please
+		<a	hx-target="#main-content"
+			hx-push-url="true"
+			hx-swap="innerHTML"
+			hx-get="{{ url_for('get_login') }}"
+			class="standard-link">
+			Log in
+		</a>
+		first.
+	</div>
+{% else %}
+	<div id="typing-container">
+		<div id="text-display"></div>
+		<input id="hidden-input" type="text" autocomplete="off"/>
+	</div>
+{% endif %}
 </div>
