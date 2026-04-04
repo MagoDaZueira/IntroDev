@@ -89,7 +89,6 @@ input:hover {
 
 a[hx-get]:not([href]), 
 a[hx-post]:not([href]),
-[hx-get], [hx-post],
-:not([form]) {
+button {
 	cursor: pointer;
 }
