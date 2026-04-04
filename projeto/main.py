@@ -28,6 +28,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory=["templates"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+WORDS = []
 
 class UserBase(BaseModel):
     username: str
@@ -37,6 +38,9 @@ class UserBase(BaseModel):
 
 @app.on_event("startup")
 def on_startup():
+    with open("static/wordlists/english1k.txt") as f:
+        global WORDS
+        WORDS = [w.strip() for w in f if w.strip()]
     create_db_and_tables()
 
 
