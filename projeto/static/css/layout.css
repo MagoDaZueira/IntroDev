@@ -29,3 +29,7 @@ main {
 	align-items: center;
 	gap: 5vh;
 }
+
+.invisible:empty {
+	display: none;
+}
