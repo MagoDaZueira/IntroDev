@@ -30,3 +30,12 @@ a.standard-link {
 a.standard-link:hover {
 	color: var(--fg);
 }
+
+.error {
+	margin: 0;
+	color: var(--error);
+}
+
+.error * {
+	margin: 0;
+}

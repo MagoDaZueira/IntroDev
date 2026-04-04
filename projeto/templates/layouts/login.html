@@ -2,7 +2,7 @@
 	<h1>Login</h1>
 	<form hx-post="/login"
 		  hx-trigger="submit"
-		  hx-target="#error"
+		  hx-target=".error"
 		  hx-swap="innerHTML">
 		<input type="text" name="username" placeholder="Username">
 		<input type="password" name="password" placeholder="Password">
@@ -18,5 +18,5 @@
 		</a>
 	</div>
 
-	<div class="invisible" id="error"></div>
+	<div class="invisible error"></div>
 </div>
