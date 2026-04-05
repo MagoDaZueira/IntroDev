@@ -96,6 +96,7 @@ function handleChar(key) {
 
 	if (index >= text.length) {
 		endGame();
+		return;
 	}
 
 	updateCursor(index);
