@@ -34,6 +34,8 @@ document.addEventListener("keydown", (e) => {
 });
 
 function init() {
+	resetAttempt();
+
 	input = document.getElementById('hidden-input');
 	input.focus();
 	text = container.dataset.text;
@@ -42,6 +44,15 @@ function init() {
 
 	input.removeEventListener("keydown", handleInputKeyDown);
 	input.addEventListener("keydown", handleInputKeyDown);
+}
+
+function resetAttempt() {
+	startTime = 0;
+	started = false;
+	index = 0;
+
+	typedCount = 0;
+	correctCount = 0;
 }
 
 function startGame() {
