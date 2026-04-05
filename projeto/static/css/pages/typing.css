@@ -28,6 +28,10 @@
 	background-color: var(--accent);
 }
 
+#text-display {
+	line-height: 1.8;
+}
+
 @media (max-width: 800px) {
 	.char {
 		font-size: 1.5rem;
