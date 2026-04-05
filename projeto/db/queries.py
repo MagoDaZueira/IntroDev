@@ -58,9 +58,9 @@ def get_total_time(session: Session, username: str):
 def user_dict(username: str, session: Session):
     user = get_user_by_name(session, username)
     avg_wpm = get_user_avg_wpm(session, user.username)
-    max_wpm = get_user_avg_wpm(session, user.username)
+    max_wpm = get_user_max_wpm(session, user.username)
     avg_accuracy = get_user_avg_accuracy(session, user.username)
-    max_accuracy = get_user_avg_accuracy(session, user.username)
+    max_accuracy = get_user_max_accuracy(session, user.username)
     playtime = get_total_time(session, user.username)
     attempts = get_user_attempts(session, user.username)
     attempt_count = get_attempt_count(session, user.id)
