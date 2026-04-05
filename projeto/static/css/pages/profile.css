@@ -88,3 +88,21 @@
 	word-wrap: break-word;
 	margin: 0;
 }
+
+@media (max-width: 800px) {
+
+	.attempts-table {
+		max-width: 100%;
+	}
+	
+	.attempt {
+		grid-template-columns: 1fr 1fr;
+		gap: 5px;
+		padding: 8px 10px;
+		font-size: 0.9rem;
+	}
+
+	.bio {
+		max-width: 100%;
+	}
+}

@@ -61,7 +61,6 @@ form {
 	flex-direction: column;
 	align-items: center;
 	gap: 20px;
-	/* margin-top: 40px; */
 }
 
 input {
@@ -92,4 +91,19 @@ a[hx-get]:not([href]),
 a[hx-post]:not([href]),
 button {
 	cursor: pointer;
+}
+
+@media (max-width: 800px) {
+	input {
+		max-width: 80vw;
+	}
+	
+	form {
+		gap: 15px;
+	}
+	
+	main {
+		max-width: 95vw;
+		padding: 0 0.5rem;
+	}
 }

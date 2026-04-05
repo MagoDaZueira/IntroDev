@@ -27,3 +27,13 @@
 	height: 2.2rem;
 	background-color: var(--accent);
 }
+
+@media (max-width: 800px) {
+	.char {
+		font-size: 1.5rem;
+	}
+	
+	#cursor {
+		height: 1.7rem;
+	}
+}

@@ -33,3 +33,29 @@ main {
 .invisible:empty {
 	display: none;
 }
+
+@media (max-width: 800px) {
+	.main-header {
+		padding: 0.5rem 1rem;
+	}
+	
+	.main-nav {
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+	
+	.main-nav > div {
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+	
+	main {
+		max-width: 95vw;
+		margin: 1rem auto;
+		padding: 0 0.5rem;
+	}
+	
+	.screen {
+		gap: 3vh;
+	}
+}
