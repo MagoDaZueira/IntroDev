@@ -39,3 +39,8 @@ a.standard-link:hover {
 .error * {
 	margin: 0;
 }
+
+.red-button {
+	font-weight: 400;
+	color: var(--error);
+}

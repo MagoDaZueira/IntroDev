@@ -129,6 +129,15 @@ async def get_login(request: Request, active_user = Depends(get_optional_user)):
     )
 
 
+@app.get("/settings", response_class=HTMLResponse)
+async def get_settings(request: Request, active_user = Depends(get_optional_user)):
+    return render(
+        request,
+        "/layouts/settings.html",
+        context={"active_username": active_user.username if active_user else None}
+    )
+
+
 @app.post("/login")
 async def post_login(username: str = Form(...), password: str = Form(...), session: Session = Depends(get_session)):
     try:
