@@ -16,7 +16,7 @@ from utils.validators import verify_attempt, valid_username, valid_bio, valid_pa
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
-from utils.constants import ATTEMPT_PAGINATION_STEP, DEFAULT_TEST_LENGTH
+from utils.constants import ATTEMPT_PAGINATION_STEP, DEFAULT_TEST_LENGTH, MIN_TEST_LENGTH, MAX_TEST_LENGTH
 
 from datetime import datetime
 
@@ -99,14 +99,15 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
     return HTMLResponse(content=exc.detail, status_code=exc.status_code)
 
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
+async def root(request: Request, length: int = DEFAULT_TEST_LENGTH, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
     if not active_user:
         return render(request, "/layouts/typing_test.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
-    words = generate_words(WORDS, DEFAULT_TEST_LENGTH)
+    length = max(MIN_TEST_LENGTH, min(MAX_TEST_LENGTH, length))
+    words = generate_words(WORDS, length)
     return render(
         request, "/layouts/typing_test.html",
-        context={"active_username": active_user.username, "user": user_info, "text": words}
+        context={"active_username": active_user.username, "user": user_info, "text": words, "length": length}
     )
 
 

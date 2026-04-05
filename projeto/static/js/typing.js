@@ -2,6 +2,7 @@ import { sendAttempt } from "./serverConnect.js";
 import { renderText, updateChar, resetChar, updateCursor } from "./domManipulation.js";
 
 let input = null;
+let lengthInput = null;
 let container = null;
 
 let startTime = 0;
@@ -20,16 +21,21 @@ function checkAndInit() {
 	}
 }
 
+function focusInput() {
+	if (document.activeElement === lengthInput) return;
+	input.focus();
+}
+
 checkAndInit();
 document.addEventListener("htmx:afterSettle", checkAndInit);
 
 document.addEventListener("click", () => {
-	input.focus();
+	focusInput();
 });
 
 document.addEventListener("keydown", (e) => {
 	if (document.activeElement !== input) {
-		input.focus();
+		focusInput();
 	}
 });
 
@@ -37,7 +43,9 @@ function init() {
 	resetAttempt();
 
 	input = document.getElementById('hidden-input');
+	lengthInput = document.getElementById('length-input');
 	input.focus();
+	focusInput();
 	text = container.dataset.text;
 
 	renderText(text);
@@ -59,6 +67,7 @@ function startGame() {
 	started = true;
 	startTime = Date.now();
 	index = 0;
+	lengthInput.parentElement.style.opacity = "0.2";
 }
 
 function endGame() {

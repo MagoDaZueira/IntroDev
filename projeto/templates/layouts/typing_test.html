@@ -13,6 +13,21 @@
 		first.
 	</div>
 {% else %}
+	<div id="size-chooser">
+		<label for="length-input">Test Size (10-100):</label>
+		<input 
+			id="length-input"
+			type="text"
+			value="{{ length }}"
+			autocomplete="off"
+			hx-get="/"
+			hx-trigger="input changed delay:1000ms"
+			hx-target="#main-content"
+			hx-swap="innerHTML swap:0.2s"
+			hx-push-url="false"
+			name="length"
+		/>
+	</div>
 	<div id="typing-container" data-text='{{ text }}'>
 		<div id="text-display"></div>
 		<div id="cursor"></div>

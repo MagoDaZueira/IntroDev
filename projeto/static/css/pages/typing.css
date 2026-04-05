@@ -32,6 +32,10 @@
 	line-height: 1.8;
 }
 
+#size-chooser {
+	transition: opacity 0.2s;
+}
+
 @media (max-width: 800px) {
 	#cursor {
 		height: 1.7rem;
