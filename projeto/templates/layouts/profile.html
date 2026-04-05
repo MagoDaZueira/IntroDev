@@ -1,9 +1,20 @@
 <div class="screen">
 	{% include "partials/default_user_info.html" %}
 	<div class="invisible" id="edit-profile"></div>
-	<div id="attempts-container"
-		 hx-get="/user/{{ user.username }}/attempts?offset=0"
-		 hx-trigger="load"
-		 hx-swap="innerHTML">
+	<div id="attempts-container" class="user-container">
+		<div class="attempts-table">
+			<div class="attempt header">
+				<span>WPM</span>
+				<span>Accuracy</span>
+				<span>Duration</span>
+				<span>Date</span>
+			</div>
+
+			<div id="attempts-list"
+				hx-get="/user/{{ user.username }}/attempts?offset=0"
+				hx-trigger="load"
+				hx-swap="innerHTML">
+			</div>
+		</div>
 	</div>
 </div>

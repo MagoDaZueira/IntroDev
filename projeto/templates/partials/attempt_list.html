@@ -1,8 +1,9 @@
 {% for attempt in attempts %}
 	<div class="attempt">
-		<span>{{ attempt.wpm }} WPM</span>
+		<span>{{ attempt.wpm }}</span>
 		<span>{{ attempt.accuracy }}%</span>
-		<span>{{ attempt.date }}</span>
+		<span>{{ attempt.duration }}s</span>
+		<span>{{ attempt.date.strftime('%Y-%m-%d %H:%M') }}</span>
 	</div>
 {% endfor %}
 
@@ -10,6 +11,6 @@
 	<div hx-get="/user/{{ username }}/attempts?offset={{ next_offset }}"
 		 hx-trigger="revealed"
 		 hx-target="this"
-		 hx-swap="afterend">
+		 hx-swap="outerHTML">
 	</div>
 {% endif %}

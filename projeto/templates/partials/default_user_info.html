@@ -1,4 +1,4 @@
-<div id="user-header" class="container" {% if oob %}hx-swap-oob="true"{% endif %}>
+<div id="user-header" class="user-container" {% if oob %}hx-swap-oob="true"{% endif %}>
 	{% if user.username == active_username %}
 		<button hx-get="/user/{{ user.username }}/edit"
 				hx-target="#edit-profile"
