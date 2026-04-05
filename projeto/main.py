@@ -16,7 +16,7 @@ from utils.validators import verify_attempt, valid_username, valid_bio, valid_pa
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
-from utils.constants import ATTEMPT_PAGINATION_STEP
+from utils.constants import ATTEMPT_PAGINATION_STEP, DEFAULT_TEST_LENGTH
 
 from datetime import datetime
 
@@ -103,7 +103,7 @@ async def root(request: Request, session: Session = Depends(get_session), active
     if not active_user:
         return render(request, "/layouts/typing_test.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
-    words = generate_words(WORDS, 10)
+    words = generate_words(WORDS, DEFAULT_TEST_LENGTH)
     return render(
         request, "/layouts/typing_test.html",
         context={"active_username": active_user.username, "user": user_info, "text": words}
