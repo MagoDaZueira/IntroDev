@@ -16,6 +16,8 @@ from utils.validators import verify_attempt, valid_username, valid_bio, valid_pa
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
+from utils.constants import ATTEMPT_PAGINATION_STEP
+
 from datetime import datetime
 
 arquivo_sqlite = "projeto.db"
@@ -214,6 +216,27 @@ def edit_profile_page(request: Request, username: str, session: Session = Depend
         "bio": user.bio
     }
     return render(request, "/partials/edit_profile.html", context={"user": user_info})
+
+
+@app.get("/user/{username}/attempts")
+def get_attempts(
+    request: Request,
+    username: str,
+    offset: int = 0,
+    session: Session = Depends(get_session)
+):
+
+    attempts = get_user_attempts(session, username, offset, ATTEMPT_PAGINATION_STEP)
+
+    return templates.TemplateResponse(
+        request,
+        "partials/attempt_list.html",
+        {
+            "attempts": attempts,
+            "next_offset": offset + ATTEMPT_PAGINATION_STEP,
+            "username": username
+        }
+    )
 
 
 @app.patch("/user/{username}/edit")

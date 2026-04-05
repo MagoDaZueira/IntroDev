@@ -1,4 +1,9 @@
 <div class="screen">
 	{% include "partials/default_user_info.html" %}
 	<div class="invisible" id="edit-profile"></div>
+	<div id="attempts-container"
+		 hx-get="/user/{{ user.username }}/attempts?offset=0"
+		 hx-trigger="load"
+		 hx-swap="innerHTML">
+	</div>
 </div>

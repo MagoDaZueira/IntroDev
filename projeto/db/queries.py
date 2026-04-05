@@ -1,7 +1,8 @@
 from fastapi import HTTPException
-from sqlmodel import Session, func, select
+from sqlmodel import Session, func, select, desc
 from db.models import User, Attempt
 from utils.parsers import seconds_to_time
+from utils.constants import ATTEMPT_PAGINATION_STEP
 
 
 def get_user_by_name(session: Session, username: str) -> User:
@@ -16,9 +17,18 @@ def get_attempt_count(session: Session, user_id: int):
     return session.exec(statement).one()
 
 
-def get_user_attempts(session: Session, username: str):
+def get_user_attempts(session: Session, username: str, offset: int, step: int):
     user = get_user_by_name(session, username)
-    return user.attempts
+
+    query = (
+        select(Attempt)
+        .where(Attempt.user_id == user.id)
+        .order_by(desc(Attempt.date))
+        .offset(offset)
+        .limit(step)
+    )
+
+    return session.exec(query).all()
 
 
 def get_user_avg_wpm(session: Session, username: str):
@@ -63,7 +73,7 @@ def user_dict(username: str, session: Session):
     avg_accuracy = get_user_avg_accuracy(session, user.username)
     max_accuracy = get_user_max_accuracy(session, user.username)
     playtime = get_total_time(session, user.username)
-    attempts = get_user_attempts(session, user.username)
+    attempts = get_user_attempts(session, user.username, 0, ATTEMPT_PAGINATION_STEP)
     attempt_count = get_attempt_count(session, user.id)
 
     user_info = {
