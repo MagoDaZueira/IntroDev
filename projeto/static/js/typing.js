@@ -23,7 +23,7 @@ function checkAndInit() {
 
 function focusInput() {
 	if (document.activeElement === lengthInput) return;
-	input.focus();
+	if (input) input.focus();
 }
 
 checkAndInit();
@@ -45,7 +45,7 @@ function init() {
 	input = document.getElementById('hidden-input');
 	lengthInput = document.getElementById('length-input');
 	input.focus();
-	focusInput();
+	if (input) focusInput();
 	text = container.dataset.text;
 
 	renderText(text);
