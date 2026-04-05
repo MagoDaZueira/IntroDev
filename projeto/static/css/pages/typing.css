@@ -1,5 +1,5 @@
 .char {
-	font-size: 2rem;
+	font-size: clamp(1.5rem, 2.4vw, 2.5rem);
 }
 
 .char.correct {
@@ -24,7 +24,7 @@
 	transition: left 0.1s ease, top 0.1s ease;
 
 	width: 3px;
-	height: 2.2rem;
+	height: clamp(1.7rem, 2.7vw, 2.9rem);
 	background-color: var(--accent);
 }
 
@@ -33,10 +33,6 @@
 }
 
 @media (max-width: 800px) {
-	.char {
-		font-size: 1.5rem;
-	}
-	
 	#cursor {
 		height: 1.7rem;
 	}

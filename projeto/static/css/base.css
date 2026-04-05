@@ -12,6 +12,7 @@
 body {
 	margin: 0;
 	font-family: 'Roboto Mono', monospace, sans-serif;
+	font-size: clamp(14px, 2vw, 20px);
 	background: var(--bg);
 	color: var(--fg);
 }
@@ -64,7 +65,7 @@ form {
 }
 
 input {
-	width: 250px;
+	width: clamp(200px, 40vw, 300px);
 	padding: 12px;
 	border-radius: 6px;
 	border: 1px solid var(--border);
@@ -95,7 +96,8 @@ button {
 
 @media (max-width: 800px) {
 	input {
-		max-width: 80vw;
+		width: 90vw;
+		max-width: 300px;
 	}
 	
 	form {

@@ -13,7 +13,7 @@
 	border-radius: 10px;
 	align-items: center;
 	background-color: var(--bg-deep);
-	max-width: 80vw;
+	max-width: min(80vw, 1500px);
 }
 
 .attempts-table {
@@ -53,7 +53,7 @@
 	align-items: center;
 	padding: 10px 15px;
 	border-bottom: 1px solid var(--border);
-	gap: 10vw;
+	gap: clamp(5px, 10vw, 100px);
 }
 
 .attempt:hover:not(.header) {

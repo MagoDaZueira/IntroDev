@@ -23,7 +23,7 @@
 
 .value {
 	color: var(--accent);
-	font-size: 3rem;
+	font-size: clamp(2rem, 6vw, 4rem);
 	font-weight: 900;
 	line-height: 1;
 }
@@ -37,9 +37,5 @@
 
 	.label {
 		font-size: 1rem;
-	}
-
-	.value {
-		font-size: 2.2rem;
 	}
 }
