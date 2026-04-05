@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlmodel import Session, func, select
 from db.models import User, Attempt
+from utils.parsers import seconds_to_time
 
 
 def get_user_by_name(session: Session, username: str) -> User:
@@ -72,7 +73,7 @@ def user_dict(username: str, session: Session):
         "max_wpm": max_wpm,
         "avg_accuracy": avg_accuracy,
         "max_accuracy": max_accuracy,
-        "playtime": playtime,
+        "playtime": seconds_to_time(playtime),
         "attempts": attempts,
         "attempt_count": attempt_count
     }
