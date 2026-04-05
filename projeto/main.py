@@ -12,7 +12,7 @@ from db.queries import *
 from db.updates import *
 from db.removals import *
 
-from utils.verify_attempt import verify_attempt
+from utils.validators import verify_attempt, valid_username, valid_bio, valid_password
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
@@ -149,6 +149,14 @@ async def create_user(username: str = Form(...), bio: str = Form(""), password: 
     except HTTPException:
         pass
 
+    username_error = valid_username(username)
+    bio_error = valid_bio(bio)
+    password_error = valid_password(password)
+
+    if username_error or bio_error or password_error:
+        error_msg = username_error or bio_error or password_error
+        return HTMLResponse(f'<p>{error_msg}</p>')
+
     create_new_user(session, username, bio, hash_password(password))
     session.commit()
 
@@ -174,6 +182,9 @@ async def add_attempt(
         date=datetime.now(),
         user_id=active_user.id if active_user else None
     )
+
+    if not verify_attempt(new_attempt):
+        return HTMLResponse('<p>Invalid attempt</p>')
 
     create_attempt(session, new_attempt)
     session.commit()
@@ -208,6 +219,14 @@ def edit_profile_page(request: Request, username: str, session: Session = Depend
 @app.patch("/user/{username}/edit")
 def edit_profile(request: Request, username: str, new_username: str = Form(...), new_bio: str = Form(...), session: Session = Depends(get_session)):
     user = get_user_by_name(session, username)
+
+    username_error = valid_username(new_username)
+    bio_error = valid_bio(new_bio)
+
+    if username_error or bio_error:
+        error_msg = username_error or bio_error
+        return HTMLResponse(f'<p>{error_msg}</p>')
+
     update_username(session, user, new_username)
     update_bio(session, user, new_bio)
     session.commit()
