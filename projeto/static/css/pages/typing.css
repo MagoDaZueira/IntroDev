@@ -1,9 +1,10 @@
 .char {
 	font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+	color: var(--muted);
 }
 
 .char.correct {
-	color: var(--muted);
+	color: var(--fg);
 }
 .char.incorrect {
 	color: var(--error);
