@@ -16,6 +16,8 @@ from utils.verify_attempt import verify_attempt
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
+from datetime import datetime
+
 arquivo_sqlite = "projeto.db"
 url_sqlite = f"sqlite:///{arquivo_sqlite}"
 
@@ -156,14 +158,32 @@ async def create_user(username: str = Form(...), bio: str = Form(""), password: 
 
 
 @app.post("/attempt")
-async def add_attempt(attempt: Attempt, session: Session = Depends(get_session)):
-    if not verify_attempt(attempt):
-        raise HTTPException(status_code=400, detail="Invalid attempt")
+async def add_attempt(
+    request: Request, 
+    wpm: float = Form(...), 
+    accuracy: float = Form(...), 
+    duration: float = Form(...), 
+    session: Session = Depends(get_session),
+    active_user = Depends(get_optional_user)
+):
 
-    create_attempt(session, attempt)
+    new_attempt = Attempt(
+        wpm=wpm,
+        accuracy=accuracy,
+        duration=duration,
+        date=datetime.now(),
+        user_id=active_user.id if active_user else None
+    )
+
+    create_attempt(session, new_attempt)
     session.commit()
-    session.refresh(attempt)
-    return attempt
+    session.refresh(new_attempt)
+
+    return render(
+        request, 
+        "layouts/result.html", 
+        context={"attempt": new_attempt, "user": active_user}
+    )
 
 
 @app.get("/user/{username}")

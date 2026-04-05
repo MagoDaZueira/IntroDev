@@ -16,7 +16,7 @@ class Attempt(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     wpm: float
     accuracy: float
-    date: datetime
+    date: datetime = Field(default_factory=datetime.now)
     duration: int
     user_id: int = Field(foreign_key="user.id")
 

@@ -1,0 +1,26 @@
+<div class="screen">
+	<h1>Test Results</h1>
+	<div class="results-container">
+		<div class="result-box">
+			<span class="label">WPM</span>
+			<span class="value">{{ attempt.wpm }}</span>
+		</div>
+		<div class="result-box">
+			<span class="label">Accuracy</span>
+			<span class="value">{{ attempt.accuracy }}%</span>
+		</div>
+		<div class="result-box">
+			<span class="label">Duration</span>
+			<span class="value">{{ attempt.duration }}s</span>
+		</div>
+	</div>
+
+	<div class="actions">
+		<button hx-get="/"
+				hx-target="#main-content"
+				hx-swap="innerHTML">
+			New Test
+		</button>
+	</div>
+</div>
+</div>
