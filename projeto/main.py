@@ -138,6 +138,14 @@ async def get_settings(request: Request, active_user = Depends(get_optional_user
     )
 
 
+@app.post("/logout")
+async def post_logout():
+    response = Response()
+    response.headers["HX-Redirect"] = "/"
+    response.delete_cookie(key="session_user")
+    return response
+
+
 @app.post("/login")
 async def post_login(username: str = Form(...), password: str = Form(...), session: Session = Depends(get_session)):
     try:
