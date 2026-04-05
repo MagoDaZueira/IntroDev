@@ -15,3 +15,15 @@
 	pointer-events: none;
 	z-index: -1;
 }
+
+#cursor {
+	position: fixed;
+	z-index: 100;
+	pointer-events: none;
+
+	transition: left 0.1s ease, top 0.1s ease;
+
+	width: 3px;
+	height: 2.2rem;
+	background-color: var(--accent);
+}

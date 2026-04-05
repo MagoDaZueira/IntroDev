@@ -1,5 +1,5 @@
 import { sendAttempt } from "./serverConnect.js";
-import { renderText, updateChar, resetChar } from "./domManipulation.js";
+import { renderText, updateChar, resetChar, updateCursor } from "./domManipulation.js";
 
 let input = null;
 let container = null;
@@ -86,10 +86,13 @@ function handleChar(key) {
 	if (index >= text.length) {
 		endGame();
 	}
+
+	updateCursor(index);
 }
 
 function handleBackspace() {
 	if (index <= 0) return;
 	index--;
 	resetChar(index);
+	updateCursor(index);
 }
