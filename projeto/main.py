@@ -225,7 +225,10 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
 
     if username_error or bio_error:
         error_msg = username_error or bio_error
-        return HTMLResponse(f'<p>{error_msg}</p>')
+        return HTMLResponse(
+            content=f'<p>{error_msg}</p>',
+            headers={"HX-Retarget": ".error"} 
+        )
 
     update_username(session, user, new_username)
     update_bio(session, user, new_bio)

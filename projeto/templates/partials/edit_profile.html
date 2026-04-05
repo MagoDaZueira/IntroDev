@@ -7,10 +7,12 @@
 	<input type="text" name="new_bio" placeholder="New Bio" value="{{ user.bio }}">
 
 	<button hx-get="/clear"
-			hx-target="closest form"
-			hx-swap="outerHTML"
+			hx-target="#edit-profile"
+			hx-swap="innerHTML"
 			type="button">
 		Cancel
 	</button>
 	<button type="submit">Save</button>
 </form>
+
+<div class="invisible error"></div>
