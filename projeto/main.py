@@ -101,7 +101,7 @@ async def root(request: Request, session: Session = Depends(get_session), active
     if not active_user:
         return render(request, "/layouts/typing_test.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
-    words = generate_words(WORDS, 25)
+    words = generate_words(WORDS, 10)
     return render(
         request, "/layouts/typing_test.html",
         context={"active_username": active_user.username, "user": user_info, "text": words}
