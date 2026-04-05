@@ -21,11 +21,17 @@ export function renderText(text) {
 }
 
 export function updateChar(i, correct) {
+	if (!correct && chars[i].innerText === " ") {
+		chars[i].innerText = "_";
+	}
 	chars[i].classList.remove("correct", "incorrect");
 	chars[i].classList.add(correct ? "correct" : "incorrect");
 }
 
 export function resetChar(i) {
+	if (chars[i].innerText === "_") {
+		chars[i].innerText = " ";
+	}
 	chars[i].classList.remove("correct", "incorrect");
 }
 
