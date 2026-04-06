@@ -99,7 +99,7 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
     return HTMLResponse(content=exc.detail, status_code=exc.status_code)
 
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request, length: int = DEFAULT_TEST_LENGTH, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
+async def root(request: Request, length: int = DEFAULT_TEST_LENGTH, session: Session = Depends(get_session), active_user: User = Depends(get_optional_user)):
     if not active_user:
         return render(request, "/layouts/typing.html", context={"active_username": None})
     user_info = user_dict(active_user.username, session)
@@ -112,7 +112,7 @@ async def root(request: Request, length: int = DEFAULT_TEST_LENGTH, session: Ses
 
 
 @app.get("/signup", response_class=HTMLResponse)
-async def get_signup(request: Request, active_user = Depends(get_optional_user)):
+async def get_signup(request: Request, active_user: User = Depends(get_optional_user)):
     return render(
         request,
         "/layouts/signup.html",
@@ -121,7 +121,7 @@ async def get_signup(request: Request, active_user = Depends(get_optional_user))
 
 
 @app.get("/login", response_class=HTMLResponse)
-async def get_login(request: Request, active_user = Depends(get_optional_user)):
+async def get_login(request: Request, active_user: User = Depends(get_optional_user)):
     return render(
         request,
         "/layouts/login.html",
@@ -130,7 +130,7 @@ async def get_login(request: Request, active_user = Depends(get_optional_user)):
 
 
 @app.get("/settings", response_class=HTMLResponse)
-async def get_settings(request: Request, active_user = Depends(get_optional_user)):
+async def get_settings(request: Request, active_user: User = Depends(get_optional_user)):
     return render(
         request,
         "/layouts/settings.html",
@@ -192,7 +192,7 @@ async def add_attempt(
     accuracy: float = Form(...), 
     duration: float = Form(...), 
     session: Session = Depends(get_session),
-    active_user = Depends(get_optional_user)
+    active_user: User = Depends(get_optional_user)
 ):
 
     new_attempt = Attempt(
@@ -218,7 +218,7 @@ async def add_attempt(
 
 
 @app.get("/user/{username}")
-async def user_page(request: Request, username: str, session: Session = Depends(get_session), active_user = Depends(get_optional_user)):
+async def user_page(request: Request, username: str, session: Session = Depends(get_session), active_user: User = Depends(get_optional_user)):
     user_info = user_dict(username, session)
     active_username = active_user.username if active_user else None
     return render(request, "/layouts/profile.html", context={"user": user_info, "active_username": active_username})
@@ -286,7 +286,7 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
 
 
 @app.delete("/user/{username}")
-async def delete_user(username: str, session: Session = Depends(get_session), active_user = Depends(get_active_user)):
+async def delete_user(username: str, session: Session = Depends(get_session), active_user: User = Depends(get_active_user)):
     if active_user.username != username:
         raise HTTPException(status_code=403, detail="You can only delete your own account")
 
