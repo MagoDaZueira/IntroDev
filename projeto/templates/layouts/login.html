@@ -11,7 +11,7 @@
 	<div id="suggest-link">Don't have an account yet?
 		<a	hx-target="#main-content"
 			hx-push-url="true"
-			hx-swap="innerHTML"
+			hx-swap="innerHTML swap:0.2s"
 			hx-get="{{ url_for('get_signup') }}"
 			class="standard-link">
 			Sign up
