@@ -47,16 +47,6 @@ button:hover {
 	color: var(--bg);
 }
 
-input {
-	border: 1px solid var(--border);
-	color: var(--fg);
-	background-color: var(--bg-surface);
-}
-
-input::placeholder {
-	color: var(--muted);
-}
-
 form {
 	display: flex;
 	flex-direction: column;
