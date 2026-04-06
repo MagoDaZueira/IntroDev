@@ -9,6 +9,11 @@
 	--error: #ef4444;
 }
 
+::selection {
+	background-color: var(--accent);
+	color: var(--bg-deep);
+}
+
 body {
 	margin: 0;
 	font-family: 'Roboto Mono', monospace, sans-serif;
