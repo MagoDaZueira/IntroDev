@@ -8,3 +8,5 @@ ATTEMPT_PAGINATION_STEP = 10
 DEFAULT_TEST_LENGTH = 25
 MIN_TEST_LENGTH = 10
 MAX_TEST_LENGTH = 100
+
+INTEGRITY_KEY = "NOT_SO_SECRET_KEY" # obviously supposed to be in a .env in a real project

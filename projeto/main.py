@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, SQLModel, create_engine
 from typing import Annotated
+from itsdangerous import BadSignature, URLSafeSerializer
 
 from db.models import User, Attempt
 from db.insertions import *
@@ -15,7 +16,7 @@ from utils.validators import verify_attempt, valid_username, valid_bio, valid_pa
 from utils.password import hash_password, verify_password
 from utils.words_generation import generate_words
 
-from utils.constants import ATTEMPT_PAGINATION_STEP, DEFAULT_TEST_LENGTH, MIN_TEST_LENGTH, MAX_TEST_LENGTH
+from utils.constants import ATTEMPT_PAGINATION_STEP, DEFAULT_TEST_LENGTH, MIN_TEST_LENGTH, MAX_TEST_LENGTH, INTEGRITY_KEY
 
 from datetime import datetime
 
@@ -31,6 +32,8 @@ app = FastAPI()
 
 templates = Jinja2Templates(directory=["templates"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+serializer = URLSafeSerializer(INTEGRITY_KEY, salt="session")
 
 WORDS = []
 
@@ -52,7 +55,10 @@ def get_optional_user(session_user: Annotated[str | None, Cookie()] = None, sess
     if not session_user:
         return None
     try:
-        user = get_user_by_name(session, session_user)
+        data = serializer.loads(session_user)
+        user = get_user_by_name(session, data["username"])
+    except BadSignature:
+        user = None
     except HTTPException:
         user = None
     return user
@@ -62,7 +68,11 @@ def get_active_user(session_user: Annotated[str | None, Cookie()] = None, sessio
     if not session_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    user = get_user_by_name(session, session_user)
+    try:
+        data = serializer.loads(session_user)
+        user = get_user_by_name(session, data["username"])
+    except BadSignature:
+        raise HTTPException(status_code=401, detail="Not authenticated")
     return user
 
 
@@ -156,7 +166,8 @@ async def post_login(username: str = Form(...), password: str = Form(...), sessi
 
     response = Response()
     response.headers["HX-Redirect"] = "/"
-    response.set_cookie(key="session_user", value=user.username)
+    token = serializer.dumps({"username": user.username})
+    response.set_cookie(key="session_user", value=token, httponly=True)
     return response
 
 
@@ -279,7 +290,8 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
         "/partials/default_user_info.html",
         context={"user": user_info, "active_username": new_username, "oob": True}
     )
-    response.set_cookie(key="session_user", value=new_username)
+    token = serializer.dumps({"username": new_username})
+    response.set_cookie(key="session_user", value=token, httponly=True)
     response.headers["HX-Push-Url"] = f'/user/{new_username}'
     return response
 
