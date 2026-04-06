@@ -1,7 +1,11 @@
 <div class="screen">
 	<h1>Settings</h1>
-	<button class="red-button"
-			hx-post="/logout">
-		Logout
-	</button>
+	{% if not active_username %}
+		{% include 'atomic/suggest_login.html' %}
+	{% else %}
+		<button class="red-button"
+				hx-post="/logout">
+			Logout
+		</button>
+	{% endif %}
 </div>

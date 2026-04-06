@@ -1,16 +1,7 @@
 <div class="screen">
 <h1>The Typist</h1>
 {% if not active_username %}
-	<div id="suggest-link">
-		Please
-		<a	hx-target="#main-content"
-			hx-push-url="true"
-			hx-swap="innerHTML"
-			hx-get="{{ url_for('get_login') }}"
-			class="standard-link">
-			Log in</a> 
-		first.
-	</div>
+	{% include 'atomic/suggest_login.html' %}
 {% else %}
 	<div id="size-chooser">
 		<label for="length-input">Test Size (10-100):</label>
