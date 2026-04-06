@@ -141,7 +141,7 @@ async def get_settings(request: Request, active_user = Depends(get_optional_user
 @app.post("/logout")
 async def post_logout():
     response = Response()
-    response.headers["HX-Redirect"] = "/"
+    response.headers["HX-Redirect"] = "/login"
     response.delete_cookie(key="session_user")
     return response
 
@@ -286,8 +286,14 @@ def edit_profile(request: Request, username: str, new_username: str = Form(...),
 
 
 @app.delete("/user/{username}")
-async def delete_user(username: str, session: Session = Depends(get_session)):
+async def delete_user(username: str, session: Session = Depends(get_session), active_user = Depends(get_active_user)):
+    if active_user.username != username:
+        raise HTTPException(status_code=403, detail="You can only delete your own account")
+
     delete_user_by_name(session, username)
     session.commit()
 
-    return {"message": "User deleted successfully"}
+    response = Response()
+    response.headers["HX-Redirect"] = "/login"
+    response.delete_cookie(key="session_user")
+    return response
