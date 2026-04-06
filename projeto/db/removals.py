@@ -11,5 +11,3 @@ def delete_user_by_name(session: Session, username: str):
     user = get_user_by_name(session, username)
     delete_attempts(session, user.id)
     session.exec(delete(User).where(User.username == username))
-
-    return {"message": "User deleted successfully"}
