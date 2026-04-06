@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, SQLModel, create_engine
-from pydantic import BaseModel
 from typing import Annotated
 
 from db.models import User, Attempt
