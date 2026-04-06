@@ -35,6 +35,11 @@
 
 #size-chooser {
 	transition: opacity 0.2s;
+	color: var(--muted);
+}
+
+#length-input {
+	width: 50px;
 }
 
 @media (max-width: 800px) {
