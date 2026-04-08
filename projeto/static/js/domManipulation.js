@@ -23,6 +23,7 @@ export function renderText(text) {
 export function updateChar(i, correct) {
 	if (!correct && chars[i].innerText === " ") {
 		chars[i].innerText = "_";
+		chars[i].style.wordBreak = "break-all";
 	}
 	chars[i].classList.remove("correct", "incorrect");
 	chars[i].classList.add(correct ? "correct" : "incorrect");
@@ -31,6 +32,7 @@ export function updateChar(i, correct) {
 export function resetChar(i) {
 	if (chars[i].innerText === "_") {
 		chars[i].innerText = " ";
+		chars[i].style.wordBreak = "normal";
 	}
 	chars[i].classList.remove("correct", "incorrect");
 }
