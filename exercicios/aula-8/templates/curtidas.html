@@ -1,0 +1,12 @@
+<button hx-post="/curtir"
+        hx-target="#contador"
+        hx-swap="outerHTML">
+    Curtir!
+</button>
+<button hx-delete="/curtir"
+        hx-target="#contador"
+        hx-swap="outerHTML"
+        hx-confirm="Tem Certeza?">
+    Zerar curtidas
+</button>
+<p id="contador">{{ curtidas }}</p>

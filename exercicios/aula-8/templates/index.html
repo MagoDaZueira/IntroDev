@@ -3,21 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curtidas</title>
+    <title>Rei das Abas</title>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <style>
+        nav { background: #f0f0f0; padding: 10px; }
+        nav button { margin: 0 5px; padding: 10px; cursor: pointer; }
+        nav button.active { background: #ccc; }
+        .tab-content { padding: 20px; }
+    </style>
+	<link rel="stylesheet" href="/static/jupiter/styles.css">
+	<link rel="stylesheet" href="/static/professor/styles.css">
 </head>
 <body>
-    <button hx-post="/curtir"
-            hx-target="#contador"
-            hx-swap="outerHTML">
-        Curtir!
-    </button>
-    <button hx-delete="/curtir"
-            hx-target="#contador"
-            hx-swap="outerHTML"
-            hx-confirm="Tem Certeza?">
-        Zerar curtidas
-    </button>
-    <p id="contador">{{ curtidas }}</p>
+    <header>
+        <nav>
+            <button hx-get="/curtidas" hx-target="#content" hx-swap="innerHTML" class="tab-button active" id="curtidas-btn">Curtidas</button>
+            <button hx-get="/jupiter" hx-target="#content" hx-swap="innerHTML" class="tab-button" id="jupiter-btn">Júpiter</button>
+            <button hx-get="/professor" hx-target="#content" hx-swap="innerHTML" class="tab-button" id="professor-btn">Professor</button>
+        </nav>
+    </header>
+    <div id="content" class="tab-content">
+        <button hx-post="/curtir"
+                hx-target="#contador"
+                hx-swap="outerHTML">
+            Curtir!
+        </button>
+        <button hx-delete="/curtir"
+                hx-target="#contador"
+                hx-swap="outerHTML"
+                hx-confirm="Tem Certeza?">
+            Zerar curtidas
+        </button>
+        <p id="contador">{{ curtidas }}</p>
+    </div>
+    <script>
+        function activateButtons(e) {
+            if (e.detail.requestConfig.path === '/curtidas') {
+                document.getElementById('curtidas-btn').classList.add('active');
+            } else if (e.detail.requestConfig.path === '/jupiter') {
+                document.getElementById('jupiter-btn').classList.add('active');
+            } else if (e.detail.requestConfig.path === '/professor') {
+                document.getElementById('professor-btn').classList.add('active');
+            }
+        }
+        document.addEventListener('htmx:afterSwap', function(e) {
+            activateButtons(e);
+            let activeCount = document.querySelectorAll('.tab-button.active').length;
+            if (activeCount > 1) {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                activateButtons(e);
+            }
+        });
+    </script>
 </body>
 </html>
