@@ -46,12 +46,24 @@
                 document.getElementById('professor-btn').classList.add('active');
             }
         }
-        document.addEventListener('htmx:afterSwap', function(e) {
+        document.addEventListener('htmx:afterSwap', (e) => {
             activateButtons(e);
             let activeCount = document.querySelectorAll('.tab-button.active').length;
             if (activeCount > 1) {
                 document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
                 activateButtons(e);
+            }
+        });
+        let tabs = ['curtidas-btn', 'jupiter-btn', 'professor-btn'];
+        let currentTab = 0;
+        document.addEventListener('keydown', (e) => {
+            // if (e.shiftKey && e.altKey && e.key === 'P') {
+            // No meu pc só funciona desse jeito absurdo aq embaixo
+            // Certamente tem um jeito melhor mas vou procurar não
+            if (e.shiftKey && e.altKey && e.key === '∏') {
+                e.preventDefault();
+                currentTab = (currentTab + 1) % tabs.length;
+                document.getElementById(tabs[currentTab]).click();
             }
         });
     </script>
